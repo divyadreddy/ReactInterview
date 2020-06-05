@@ -1,32 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
-import axios from "axios";
- 
+import { useSelector, useDispatch } from "react-redux";
+import { getInterview } from "../../redux/actions/interview.jsx";
 import "react-datepicker/dist/react-datepicker.css";
 
 function ShowInterview() {
   const { id } = useParams();
-  const [title, setTitle] = useState("");
-  const [start_time, setStartTime] = useState();
-  const [end_time, setEndTime] = useState();
-  const [interviewer_id, setInterviewerId ] = useState();
-  const [interviewee_id, setIntervieweeId ] = useState();
-
+  let title = useSelector(state => state.interview.title);
+  let interviewer_id = useSelector(state => state.interview.interviewer_id );
+  let interviewee_id = useSelector(state => state.interview.interviewee_id );
+  let start_time = useSelector(state => state.interview.start_time );
+  let end_time = useSelector(state => state.interview.end_time );
+  const dispatch = useDispatch()
   useEffect(() => {
-    axios
-      .get(`http://localhost:3000/interviews/${id}.json`)
-      .then((res) => {
-          console.log(res);
-        setTitle(res.data.title);
-        setStartTime(res.data.start_time);
-        setEndTime(res.data.end_time);
-        setInterviewerId(res.data.interviewer_id);
-        setIntervieweeId(res.data.interviewee_id);
-      })
-      .catch((error) => {
-        console.log("Error fetching Interview", error);
-      });
-  }, []);
+      dispatch(getInterview(id));
+  }, [])
 
   return (
     <div>

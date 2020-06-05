@@ -1,25 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import { getInterviewees } from "../../redux/actions/interviewees.jsx";
+import { useSelector, useDispatch } from "react-redux";
 
 
 function Interviewees() {
-  const [Interviewees, setInterviewees] = useState([]);
-  useEffect(() => {
-    axios
-      .get('http://localhost:3000/interviewees.json')
-      .then((res) => {
-        setInterviewees(res.data);
-        console.log(res);
-      })
-      .catch((error) => {
-        console.log("Error fetching Interviewees", error);
-      });
-  }, []);
+  let interviewees = useSelector(
+    state => state.interviewees.interviewees //? console.log("state", state.interviewees): null
+  );
 
+  const dispatch = useDispatch()
   
-
-
+  useEffect(() => {
+      console.log("dispatch", dispatch(getInterviewees()));
+  }, [])
+  console.log("interviewees", interviewees);
+  
   return (
     <div>
       <div>
@@ -34,7 +30,10 @@ function Interviewees() {
           </tr>
         </thead>
         <tbody>
-          {Interviewees.map((interviewee) => (
+        {console.log("jsx",interviewees)}
+        {
+        interviewees?(
+          interviewees.map((interviewee) => (
             <tr key={interviewee.id}>
             <td> {interviewee.id}</td>
               <td> {interviewee.email}</td>
@@ -47,7 +46,7 @@ function Interviewees() {
               </td>
               
             </tr>
-          ))}
+          ))) : (<p>Loading</p>)}
         </tbody>
       </table>
       <Link className="btn btn-primary" to={`/interviewees/new`}>

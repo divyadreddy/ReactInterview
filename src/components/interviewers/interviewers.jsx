@@ -1,24 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import { getInterviewers } from "../../redux/actions/interviewers.jsx";
+import { useSelector, useDispatch } from "react-redux";
 
 
 function Interviewers() {
-  const [Interviewers, setInterviewers] = useState([]);
-  useEffect(() => {
-    axios
-      .get('http://localhost:3000/interviewers.json')
-      .then((res) => {
-        setInterviewers(res.data);
-        console.log(res);
-      })
-      .catch((error) => {
-        console.log("Error fetching Interviewers", error);
-      });
-  }, []);
+  let interviewers = useSelector(
+    state => state.interviewers.interviewers //? console.log("state", state.interviewees): null
+  );
 
+  const dispatch = useDispatch()
   
-
+  useEffect(() => {
+      console.log("dispatch", dispatch(getInterviewers()));
+  }, [])
+  console.log("interviewers", interviewers);
 
   return (
     <div>
@@ -34,7 +30,10 @@ function Interviewers() {
           </tr>
         </thead>
         <tbody>
-          {Interviewers.map((interviewer) => (
+        {console.log("jsx",interviewers)}
+        {
+        interviewers?(
+          interviewers.map((interviewer) => (
             <tr key={interviewer.id}>
             <td> {interviewer.id}</td>
               <td> {interviewer.email}</td>
@@ -47,7 +46,7 @@ function Interviewers() {
               </td>
               
             </tr>
-          ))}
+            ))) : (<p>Loading</p>)}
         </tbody>
       </table>
       <Link className="btn btn-primary" to={`/interviewers/new`}>
