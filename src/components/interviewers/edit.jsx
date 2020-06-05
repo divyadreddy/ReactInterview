@@ -1,52 +1,35 @@
-import React, { useState, useEffect } from "react";
+import React, {useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import axios from "axios";
-import DatePicker from "react-datepicker";
- 
-import "react-datepicker/dist/react-datepicker.css";
+import { useSelector, useDispatch } from "react-redux";
+import { getInterviewer, editInterviewer, update, deleteInterviewer } from "../../redux/actions/interviewer.jsx";
 
 function EditInterviewer() {
   const { id } = useParams();
-  const [email, setEmail] = useState("");
+  let email = useSelector(state => state.interviewer.email);
 
+  const dispatch = useDispatch()
+  console.log(email)
   useEffect(() => {
-    axios
-      .get(`http://localhost:3000/interviewers/${id}.json`)
-      .then((res) => {
-          console.log(res);
-        setEmail(res.data.email);
-      })
-      .catch((error) => {
-        console.log("Error fetching Interviewer", error);
-      });
-  }, []);
+    dispatch(getInterviewer(id));
+}, [])
 
   function handleSubmit(e) {
     e.preventDefault();
-    const interviewer = {
+    const interviewer= {
       email
     };
+    console.log("Modified values", interviewer);
+    dispatch(editInterviewer(id, interviewer));
     console.log(interviewer);
-    axios
-      .patch(`http://localhost:3000/interviewers/${id}.json`, { interviewer })
-      .then((res) => {
-        alert("Interviewer Updated");
-      })
-      .catch((error) => {
-        console.log("Error Updating Interviewer", error);
-      });
   }
 
   function handleDelete(e) {
     e.preventDefault();
-    axios
-      .delete(`http://localhost:3000/interviewers/${id}.json`)
-      .then((res) => {
-        alert("Interviewer Deleted");
-      })
-      .catch((error) => {
-        console.log("Error Deleting Interviewer", error);
-      });
+    dispatch(deleteInterviewer(id));
+  }
+
+  function handleChange(e) {
+    dispatch(update(e.target.id, e.target.value));
   }
 
   return (
@@ -55,7 +38,7 @@ function EditInterviewer() {
        <form>
         <div>
           <label htmlFor="title">Title:</label>
-          <input type="text" id="title" onChange={(e) => setEmail(e.target.value)} value={email}/>
+          <input type="text" id="email" onChange={(e) => handleChange(e)} value={email}/>
         </div>
 
         <div>

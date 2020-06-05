@@ -1,27 +1,24 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
-import DatePicker from "react-datepicker";
- 
-import "react-datepicker/dist/react-datepicker.css";
+import { useSelector, useDispatch } from "react-redux";
+import { addInterviewee, update } from "../../redux/actions/interviewee.jsx";
 
 function AddInterviewee() {
-  const [email, setEmail] = useState("");
+  let email = useSelector(state => state.interviewee.email);
+
+  const dispatch = useDispatch()
+
+  function handleChange(e) {
+    dispatch(update(e.target.id, e.target.value));
+  }
 
   function handleSubmit(e) {
     e.preventDefault();
     const interviewee = {
       email
     };
-    console.log(interviewee);
-    axios
-      .post("http://localhost:3000/interviewees.json", { interviewee })
-      .then((res) => {
-        alert("Interviewee Added");
-      })
-      .catch((error) => {
-        console.log("Error Adding Interviewee", error);
-      });
+    console.log("Interviewee", interviewee);
+    dispatch(addInterviewee(interviewee));
   }
 
   return (
@@ -30,7 +27,7 @@ function AddInterviewee() {
       <form id="form_Interviewee">
         <div>
           <label htmlFor="title">Title:</label>
-          <input type="text" id="title" onChange={(e) => setEmail(e.target.value)}/>
+          <input type="text" id="email" onChange={(e) => handleChange(e)}/>
         </div>
 
 

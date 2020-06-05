@@ -1,21 +1,21 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import { getInterviews } from "../../redux/actions/interviews.jsx";
+import { useSelector, useDispatch } from "react-redux";
 
-
-function Interviews() {
-  const [Interviews, setInterviews] = useState([]);
+const Interviews = () => {
+  
+  let interviews = useSelector(
+    state => state.interviews.interviews //? console.log(state.interviews): null
+  );
+  console.log("interviews lo")
+  const dispatch = useDispatch()
+  
   useEffect(() => {
-    axios
-      .get('http://localhost:3000/interviews.json')
-      .then((res) => {
-        setInterviews(res.data);
-        console.log(res);
-      })
-      .catch((error) => {
-        console.log("Error fetching Interviews", error);
-      });
-  }, []);
+      console.log("dispatch", dispatch(getInterviews()));
+  }, [])
+  console.log("interviews", interviews);
+  
   return (
     <div>
       <div>
@@ -31,7 +31,10 @@ function Interviews() {
           </tr>
         </thead>
         <tbody>
-          {Interviews.map((interview) => (
+        {console.log("jsx",interviews)}
+        {
+        interviews?(
+          interviews.map((interview) => (
             <tr key={interview.id}>
               <td> {interview.title}</td>
               <td> {interview.start_time}</td>
@@ -44,7 +47,7 @@ function Interviews() {
                 <Link to={`/interviews/${interview.id}/edit`}>Edit</Link>
               </td>
             </tr>
-          ))}
+          ))) : (<p>Loading</p>)}
         </tbody>
       </table>
       <Link className="btn btn-primary" to={`/interviews/new`}>
@@ -53,4 +56,5 @@ function Interviews() {
     </div>
   );
 }
-  export default Interviews;
+
+export default Interviews;
